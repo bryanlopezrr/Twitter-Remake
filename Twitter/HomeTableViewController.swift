@@ -12,18 +12,26 @@ class HomeTableViewController: UITableViewController {
     
     var tweetArray = [NSDictionary]()
     var numberOfTweet: Int!
+    
+    
+    let myRefreshControll = UIRefreshControl()
+    
 
     @IBAction func onLogout(_ sender: Any) {
         TwitterAPICaller.client?.logout()
         self.dismiss(animated: true, completion: nil)
         UserDefaults.standard.set(false, forKey: "userLoggedIn")
     }
+    
 
-    @objc func loadTweet(){
+    @objc func loadTweets(){
+        
+        numberOfTweet = 20
+        
         
        let myUrl = "https://api.twitter.com/1.1/statuses/home_timeline.json"
         
-        let myParams = ["count": 10]
+        let myParams = ["count": numberOfTweet]
         
         TwitterAPICaller.client?.getDictionariesRequest(url: myUrl, parameters: myParams, success: { (tweets: [NSDictionary]) in
             
@@ -32,8 +40,8 @@ class HomeTableViewController: UITableViewController {
             for tweet in tweets{
                 self.tweetArray.append(tweet)
             }
-            
             self.tableView.reloadData()
+            self.myRefreshControll.endRefreshing()
             
         }, failure: { (Error) in
             print("Could not retrieve tweets! Oh no!!")
@@ -41,7 +49,29 @@ class HomeTableViewController: UITableViewController {
         
     }
     
+    func loadMoreTweets(){
+        
+        let myUrl = "https://api.twitter.com/1.1/statuses/home_timeline.json"
+        
+        numberOfTweet = numberOfTweet + 20
+         let myParams = ["count": numberOfTweet]
+        TwitterAPICaller.client?.getDictionariesRequest(url: myUrl, parameters: myParams, success: { (tweets: [NSDictionary]) in
+                   
+                   self.tweetArray.removeAll()
+                   
+                   for tweet in tweets{
+                       self.tweetArray.append(tweet)
+                   }
+                   self.tableView.reloadData()
+                   self.myRefreshControll.endRefreshing()
+                   
+               }, failure: { (Error) in
+                   print("Could not retrieve tweets! Oh no!!")
+               })
+               
+    }
     
+
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "tweetCell", for: indexPath) as! TweetCellTableViewCell
         
@@ -60,17 +90,24 @@ class HomeTableViewController: UITableViewController {
         return cell
     }
     
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
+//        loadTweets()
         
-        loadTweet()
+        myRefreshControll.addTarget(self, action: #selector(loadTweets), for: .valueChanged)
+        
+        tableView.refreshControl = myRefreshControll
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
+    }
+    
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.loadTweets()
     }
 
     // MARK: - Table view data source
@@ -92,6 +129,14 @@ class HomeTableViewController: UITableViewController {
         // #warning Incomplete implementation, return the number of rows
         return tweetArray.count
     }
+    
+    
+    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if indexPath.row + 1 == tweetArray.count{
+            loadMoreTweets()
+        }
+    }
+    
 
     /*
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
