@@ -10,18 +10,16 @@ import UIKit
 
 class HomeTableViewController: UITableViewController {
     
-    
     var tweetArray = [NSDictionary]()
     var numberOfTweet: Int!
 
-    
     @IBAction func onLogout(_ sender: Any) {
         TwitterAPICaller.client?.logout()
         self.dismiss(animated: true, completion: nil)
         UserDefaults.standard.set(false, forKey: "userLoggedIn")
     }
 
-    func loadTweet(){
+    @objc func loadTweet(){
         
        let myUrl = "https://api.twitter.com/1.1/statuses/home_timeline.json"
         
@@ -76,7 +74,15 @@ class HomeTableViewController: UITableViewController {
     }
 
     // MARK: - Table view data source
-
+//
+//    override func viewDidAppear(_ animated: Bool) {
+//        //error is here
+//        super.viewDidAppear(animated: true){
+//            self.loadTweet()
+//        }
+//    }
+// 
+    
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
         return 1
