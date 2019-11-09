@@ -92,10 +92,16 @@
                                                 <constraint firstAttribute="width" constant="30" id="HKz-az-szF"/>
                                             </constraints>
                                             <state key="normal" image="favor-icon"/>
+                                            <connections>
+                                                <action selector="favoriteAction:" destination="GBR-0y-bUp" eventType="touchUpInside" id="sak-Ks-Bcc"/>
+                                            </connections>
                                         </button>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Nw7-7l-xGa">
                                             <rect key="frame" x="280" y="99" width="30" height="30"/>
                                             <state key="normal" image="retweet-icon"/>
+                                            <connections>
+                                                <action selector="retweetAction:" destination="GBR-0y-bUp" eventType="touchUpInside" id="s9T-YC-tIw"/>
+                                            </connections>
                                         </button>
                                     </subviews>
                                     <constraints>
@@ -117,7 +123,9 @@
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
+                                    <outlet property="favoriteButton" destination="3ar-5P-4BS" id="DXD-IS-dbO"/>
                                     <outlet property="profileImageView" destination="57O-iE-uub" id="oHS-lY-CMJ"/>
+                                    <outlet property="retweetButton" destination="Nw7-7l-xGa" id="Hq2-a5-DJP"/>
                                     <outlet property="tweetContent" destination="Dbq-qv-0gk" id="dpm-Zk-IHw"/>
                                     <outlet property="userNameLabel" destination="FL7-nb-4qh" id="ILu-cf-ZBe"/>
                                 </connections>
